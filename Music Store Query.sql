@@ -21,6 +21,7 @@ ORDER BY c DESC
 SELECT total 
 FROM invoice
 ORDER BY total DESC
+limit 3
 
 
 -- Q4: Which city has the best customers? We would like to throw a promotional Music Festival in the city we made the most money. 
@@ -57,7 +58,7 @@ LIMIT 1;
 SELECT DISTINCT email,first_name, last_name
 FROM customer
 JOIN invoice ON customer.customer_id = invoice.customer_id
-JOIN invoiceline ON invoice.invoice_id = invoiceline.invoice_id
+JOIN invoice_line ON invoice.invoice_id = invoice_line.invoice_id
 WHERE track_id IN(
 	SELECT track_id FROM track
 	JOIN genre ON track.genre_id = genre.genre_id
@@ -71,8 +72,8 @@ ORDER BY email;
 SELECT DISTINCT email AS Email,first_name AS FirstName, last_name AS LastName, genre.name AS Name
 FROM customer
 JOIN invoice ON invoice.customer_id = customer.customer_id
-JOIN invoiceline ON invoiceline.invoice_id = invoice.invoice_id
-JOIN track ON track.track_id = invoiceline.track_id
+JOIN invoice_line ON invoice_line.invoice_id = invoice.invoice_id
+JOIN track ON track.track_id = invoice_line.track_id
 JOIN genre ON genre.genre_id = track.genre_id
 WHERE genre.name LIKE 'Rock'
 ORDER BY email;
@@ -94,12 +95,12 @@ LIMIT 10;
 -- Q3: Return all the track names that have a song length longer than the average song length. 
 -- Return the Name and Milliseconds for each track. Order by the song length with the longest songs listed first.
 
-SELECT name,miliseconds
+SELECT name,milliseconds
 FROM track
-WHERE miliseconds > (
-	SELECT AVG(miliseconds) AS avg_track_length
+WHERE milliseconds > (
+	SELECT AVG(milliseconds) AS avg_track_length
 	FROM track )
-ORDER BY miliseconds DESC;
+ORDER BY milliseconds DESC;
 
 
 
@@ -209,7 +210,7 @@ WITH RECURSIVE
 		FROM invoice
 		JOIN customer ON customer.customer_id = invoice.customer_id
 		GROUP BY 1,2,3,4
-		ORDER BY 2,3 DESC),
+		ORDER BY 1,5 DESC),
 
 	country_max_spending AS(
 		SELECT billing_country,MAX(total_spending) AS max_spending
